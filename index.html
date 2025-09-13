@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alfa Mine - Jogo de Minas Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c14, #121220);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        /* Tela de carregamento */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #070711, #0a0a18);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease-out;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #c89253, #f9d8a1, #c89253);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(200, 146, 83, 0.5);
+            position: relative;
+            letter-spacing: 2px;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #c89253, transparent);
+            border-radius: 50%;
+        }
+        
+        .loading-subtitle {
+            color: #a0a0b0;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .loading-tip {
+            color: #7a7a8c;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            padding: 0 10px;
+        }
+        
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #8a6534, #c89253, #f9d8a1);
+            border-radius: 10px;
+            transition: width 0.7s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: loadingShine 1.5s infinite;
+        }
+        
+        @keyframes loadingShine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        .loading-percentage {
+            font-size: 0.9rem;
+            color: #c89253;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .brand {
+            position: absolute;
+            bottom: 20px;
+            color: #5a5a6c;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Container principal do jogo */
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(200, 146, 83, 0.1);
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 12px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .header-decoration {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #c89253, transparent);
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #d6a866, #f9d8a1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(200, 146, 83, 0.3);
+            letter-spacing: 1.5px;
+        }
+        
+        header p {
+            color: #a0a0b0;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        
+        .balance-container {
+            background: rgba(20, 20, 30, 0.8);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 160px;
+            border: 1px solid rgba(200, 146, 83, 0.15);
+            position: relative;
+        }
+        
+        .balance-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(200, 146, 83, 0.1), transparent);
+            border-radius: 11px;
+            z-index: -1;
+        }
+        
+        .balance-label {
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            color: #a9a9b9;
+            letter-spacing: 1px;
+        }
+        
+        .balance {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #f9d8a1;
+            text-shadow: 0 0 10px rgba(249, 216, 161, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .balance i {
+            font-size: 1.2rem;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-bottom: 12px;
+            background: rgba(20, 20, 30, 0.6);
+            padding: 10px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(200, 146, 83, 0.1);
+            gap: 6px;
+        }
+        
+        .info-item {
+            text-align: center;
+            padding: 0 5px;
+            flex: 1;
+            min-width: 22%;
+        }
+        
+        .info-item div:first-child {
+            color: #a0a0b0;
+            font-size: 0.7rem;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-size: 0.9rem;
+            color: #f9d8a1;
+            font-weight: bold;
+        }
+        
+        .bet-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .bet-label {
+            color: #a0a0b0;
+            font-size: 0.85rem;
+        }
+        
+        .bet-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            max-width: 100%;
+        }
+        
+        .bet-option {
+            background: rgba(30, 30, 40, 0.7);
+            border: 1px solid rgba(200, 146, 83, 0.2);
+            color: #d6a866;
+            padding: 6px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            min-width: 60px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .bet-option.selected {
+            background: linear-gradient(to right, #8a6534, #c89253);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(200, 146, 83, 0.4);
+            border: 1px solid rgba(249, 216, 161, 0.3);
+        }
+        
+        .bet-option:hover:not(.selected) {
+            background: rgba(200, 146, 83, 0.15);
+            border: 1px solid rgba(200, 146, 83, 0.4);
+        }
+        
+        .bet-option:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .cell {
+            aspect-ratio: 1;
+            background: rgba(25, 25, 35, 0.8);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(200, 146, 83, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .cell:hover:not(.revealed) {
+            transform: translateY(-3px);
+            background: rgba(35, 35, 45, 0.8);
+        }
+        
+        .cell:hover::before {
+            opacity: 1;
+        }
+        
+        .cell.revealed {
+            transform: scale(0.95);
+            box-shadow: 0 0 15px rgba(200, 146, 83, 0.4);
+            border: 1px solid rgba(200, 146, 83, 0.3);
+        }
+        
+        .cell.revealed::before {
+            opacity: 1;
+        }
+        
+        .cell.mine {
+            background: linear-gradient(135deg, #8a1c1c, #c53c3c);
+        }
+        
+        .cell.gem {
+            background: linear-gradient(135deg, #1c8a4a, #3cc571);
+        }
+        
+        .symbol {
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .symbol.hidden {
+            font-size: 1.1rem;
+            color: #d6a866;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-play {
+            background: linear-gradient(to right, #8a6534, #c89253);
+            color: white;
+            box-shadow: 0 4px 12px rgba(200, 146, 83, 0.3);
+        }
+        
+        .btn-play:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(200, 146, 83, 0.4);
+        }
+        
+        .btn-play:disabled {
+            background: rgba(60, 60, 70, 0.5);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-cashout {
+            background: linear-gradient(to right, #2d5c2d, #3a8c3a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(58, 140, 58, 0.3);
+        }
+        
+        .btn-cashout:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(58, 140, 58, 0.4);
+        }
+        
+        .btn-cashout:disabled {
+            background: rgba(60, 60, 70, 0.5);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+        }
+        
+        .message {
+            text-align: center;
+            margin-bottom: 12px;
+            min-height: 50px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(20, 20, 30, 0.6);
+            padding: 10px 15px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid rgba(200, 146, 83, 0.1);
+        }
+        
+        .win {
+            color: #4cd964;
+            font-weight: bold;
+        }
+        
+        .lose {
+            color: #e94560;
+        }
+        
+        footer {
+            margin-top: 12px;
+            text-align: center;
+            color: #5a5a6c;
+            font-size: 0.7rem;
+            width: 100%;
+            padding-top: 10px;
+            border-top: 1px solid rgba(200, 146, 83, 0.1);
+        }
+        
+        /* Responsividade */
+        @media (min-width: 400px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 0.9rem;
+            }
+            
+            .balance-container {
+                width: 160px;
+                padding: 12px 18px;
+            }
+            
+            .balance {
+                font-size: 1.6rem;
+            }
+            
+            .balance i {
+                font-size: 1.4rem;
+            }
+            
+            .game-info {
+                padding: 12px 8px;
+            }
+            
+            .info-item div:first-child {
+                font-size: 0.75rem;
+            }
+            
+            .info-value {
+                font-size: 1rem;
+            }
+            
+            .bet-option {
+                padding: 8px 12px;
+                min-width: 70px;
+                font-size: 0.85rem;
+            }
+            
+            .game-grid {
+                gap: 8px;
+                max-width: 380px;
+            }
+            
+            .symbol {
+                font-size: 1.8rem;
+            }
+            
+            .symbol.hidden {
+                font-size: 1.3rem;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+                max-width: 100%;
+            }
+            
+            .btn {
+                width: auto;
+                min-width: 140px;
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .message {
+                font-size: 0.9rem;
+                padding: 12px 18px;
+            }
+            
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .game-container {
+                padding: 25px;
+            }
+            
+            .logo {
+                font-size: 4.5rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            .balance-container {
+                width: 180px;
+                padding: 15px 20px;
+            }
+            
+            .balance {
+                font-size: 1.8rem;
+            }
+            
+            .balance i {
+                font-size: 1.6rem;
+            }
+            
+            .game-info {
+                padding: 15px 10px;
+            }
+            
+            .info-item div:first-child {
+                font-size: 0.85rem;
+            }
+            
+            .info-value {
+                font-size: 1.2rem;
+            }
+            
+            .bet-controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .bet-option {
+                padding: 10px 15px;
+                min-width: 80px;
+                font-size: 0.9rem;
+            }
+            
+            .game-grid {
+                gap: 10px;
+                max-width: 450px;
+            }
+            
+            .symbol {
+                font-size: 2rem;
+            }
+            
+            .symbol.hidden {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+                gap: 15px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+                min-width: 160px;
+            }
+            
+            .message {
+                font-size: 1rem;
+                padding: 15px 20px;
+            }
+            
+            footer {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        /* Modal de anúncio */
+        .ad-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+        
+        .ad-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .ad-modal-content {
+            background: linear-gradient(135deg, #151525, #1c1c2c);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(200, 146, 83, 0.3);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.5s ease;
+        }
+        
+        .ad-modal.active .ad-modal-content {
+            transform: scale(1);
+        }
+        
+        .ad-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #a0a0b0;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .ad-modal-close:hover {
+            color: #c89253;
+        }
+        
+        .ad-modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #f9d8a1;
+        }
+        
+        .ad-modal-text {
+            color: #a0a0b0;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .ad-modal-button {
+            background: linear-gradient(to right, #8a6534, #c89253);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ad-modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(200, 146, 83, 0.4);
+        }
+        
+        @media (min-width: 480px) {
+            .ad-modal-content {
+                padding: 30px;
+            }
+            
+            .ad-modal-title {
+                font-size: 1.8rem;
+            }
+            
+            .ad-modal-text {
+                font-size: 1rem;
+            }
+            
+            .ad-modal-button {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Animações de vitória */
+        @keyframes winPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes confettiRain {
+            0% { 
+                transform: translateY(-100%) rotate(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg); 
+                opacity: 0;
+            }
+        }
+
+        @keyframes coinRain {
+            0% { 
+                transform: translateY(-100px) rotate(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+
+        .win-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1500;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f9d8a1;
+            opacity: 0;
+        }
+
+        .coin {
+            position: absolute;
+            font-size: 24px;
+            color: #f9d8a1;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="logo-container">
+            <div class="logo">OS ALFAS</div>
+            <div class="loading-subtitle">Jogo de Minas Premium</div>
+        </div>
+        
+        <div class="loading-content">
+            <div class="loading-tip" id="loading-tip">Carregando recursos do jogo...</div>
+            
+            <div class="loading-bar-container">
+                <div class="loading-bar" id="progress"></div>
+            </div>
+            
+            <div class="loading-percentage" id="loading-percentage">0%</div>
+        </div>
+        
+        <div class="brand">ALFAS ENTERTAINMENT © 2023</div>
+    </div>
+    
+    <div class="game-container">
+        <header>
+            <div class="header-decoration"></div>
+            <h1>Alfa Minas</h1>
+            <p>Encontre as gemas, evite as minas e multiplique seus ganhos!</p>
+        </header>
+        
+        <div class="balance-container">
+            <div class="balance-label">SEUS ALFAS</div>
+            <div class="balance"><i class="fas fa-coins"></i> <span id="balance">10.00</span></div>
+        </div>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <div>Minas</div>
+                <div class="info-value" id="mines-count">5</div>
+            </div>
+            <div class="info-item">
+                <div>Gemas</div>
+                <div class="info-value" id="gems-count">20</div>
+            </div>
+            <div class="info-item">
+                <div>Multiplicador</div>
+                <div class="info-value" id="multiplier">1.00x</div>
+            </div>
+            <div class="info-item">
+                <div>Ganho Potencial</div>
+                <div class="info-value" id="potential-win">0.00</div>
+            </div>
+        </div>
+        
+        <div class="bet-controls">
+            <div class="bet-label">Valor da aposta:</div>
+            <div class="bet-options">
+                <button class="bet-option" data-bet="0.40">0.40</button>
+                <button class="bet-option" data-bet="1.00">1.00</button>
+                <button class="bet-option" data-bet="2.00">2.00</button>
+                <button class="bet-option selected" data-bet="5.00">5.00</button>
+                <button class="bet-option" data-bet="10.00">10.00</button>
+                <button class="bet-option" data-bet="20.00">20.00</button>
+                <button class="bet-option" data-bet="50.00">50.00</button>
+                <button class="bet-option" data-bet="100.00">100.00</button>
+            </div>
+        </div>
+        
+        <div class="game-grid" id="game-grid">
+            <!-- As células serão geradas via JavaScript -->
+        </div>
+        
+        <div class="message" id="message">Selecione uma célula para começar!</div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-play" id="play-btn"><i class="fas fa-play"></i> Jogar</button>
+            <button class="btn btn-cashout" id="cashout-btn" disabled><i class="fas fa-coins"></i> Sacar</button>
+        </div>
+        
+        <footer>
+            <p>Jogo apenas para diversão. Não envolve apostas reais.</p>
+        </footer>
+    </div>
+
+    <div class="ad-modal" id="ad-modal">
+        <div class="ad-modal-content">
+            <button class="ad-modal-close" id="ad-close"><i class="fas fa-times"></i></button>
+            <h2 class="ad-modal-title">Apoie nosso jogo!</h2>
+            <p class="ad-modal-text">Este jogo é totalmente gratuito e mantido por anúncios. Ao clicar no link abaixo, você estará ajudando a manter o jogo online.</p>
+            <button class="ad-modal-button" id="ad-button"><i class="fas fa-external-link-alt"></i> Visitar Anunciante</button>
+        </div>
+    </div>
+
+    <!-- Área para animações de vitória -->
+    <div id="win-animation" class="win-animation"></div>
+
+    <!-- Elementos de áudio -->
+    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
+    <audio id="loss-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" preload="auto"></audio>
+    <audio id="reveal-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+    <audio id="select-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
+    <audio id="celebration-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-gathering-small-attention-celebration-519.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dicas de carregamento
+            const loadingTips = [
+                "Dica: Quanto mais gemas você encontrar, maior será seu multiplicador!",
+                "Dica: Cuidado com as minas! Se você encontrar uma, perderá sua aposta.",
+                "Dica: Você pode sacar a qualquer momento para garantir seus ganhos.",
+                "Dica: Você pode alterar o valor da aposta a qualquer momento antes de jogar.",
+                "Dica: Jogue com responsabilidade, mesmo sendo um jogo de diversão."
+            ];
+            
+            // Simular tela de carregamento
+            const loadingScreen = document.querySelector('.loading-screen');
+            const progressBar = document.getElementById('progress');
+            const loadingPercentage = document.getElementById('loading-percentage');
+            const loadingTip = document.getElementById('loading-tip');
+            const gameContainer = document.querySelector('.game-container');
+            const adModal = document.getElementById('ad-modal');
+            
+            // Mostrar dica aleatória
+            loadingTip.textContent = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = `${progress}%`;
+                loadingPercentage.textContent = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            gameContainer.style.display = 'flex';
+                            setTimeout(() => {
+                                // Mostrar anúncio após 30 segundos
+                                setTimeout(showAd, 30000);
+                            }, 500);
+                        }, 500);
+                    }, 800);
+                }
+            }, 100);
+            
+            // Variáveis do jogo
+            let balance = 10.00;
+            let currentBet = 5.00;
+            let gameActive = false;
+            let minesCount = 4;
+            let gemsCount = 20;
+            let multiplier = 1.00;
+            let revealedCells = [];
+            let minesPositions = [];
+            let gemsPositions = [];
+            let gameOver = false;
+            
+            // Elementos da DOM
+            const balanceElement = document.getElementById('balance');
+            const minesCountElement = document.getElementById('mines-count');
+            const gemsCountElement = document.getElementById('gems-count');
+            const multiplierElement = document.getElementById('multiplier');
+            const potentialWinElement = document.getElementById('potential-win');
+            const gameGrid = document.getElementById('game-grid');
+            const messageElement = document.getElementById('message');
+            const playButton = document.getElementById('play-btn');
+            const cashoutButton = document.getElementById('cashout-btn');
+            const betOptions = document.querySelectorAll('.bet-option');
+            const adCloseButton = document.getElementById('ad-close');
+            const adButton = document.getElementById('ad-button');
+            const winAnimation = document.getElementById('win-animation');
+            
+            // Elementos de áudio
+            const clickSound = document.getElementById('click-sound');
+            const winSound = document.getElementById('win-sound');
+            const lossSound = document.getElementById('loss-sound');
+            const revealSound = document.getElementById('reveal-sound');
+            const selectSound = document.getElementById('select-sound');
+            const celebrationSound = document.getElementById('celebration-sound');
+            
+            // Inicializar o grid do jogo
+            function initializeGrid() {
+                gameGrid.innerHTML = '';
+                revealedCells = [];
+                minesPositions = [];
+                gemsPositions = [];
+                gameOver = false;
+                
+                // Gerar minas e gemas
+                const totalCells = 25;
+                const positions = Array.from({length: totalCells}, (_, i) => i);
+                
+                // Escolher posições aleatórias para minas
+                for (let i = 0; i < minesCount; i++) {
+                    const randomIndex = Math.floor(Math.random() * positions.length);
+                    minesPositions.push(positions[randomIndex]);
+                    positions.splice(randomIndex, 1);
+                }
+                
+                // As posições restantes são gemas
+                gemsPositions = positions;
+                
+                // Criar células
+                for (let i = 0; i < totalCells; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.index = i;
+                    
+                    // Adicionar símbolo (inicialmente escondido)
+                    const symbolElement = document.createElement('div');
+                    symbolElement.classList.add('symbol', 'hidden');
+                    symbolElement.textContent = "?";
+                    cell.appendChild(symbolElement);
+                    
+                    cell.addEventListener('click', () => revealCell(i));
+                    gameGrid.appendChild(cell);
+                }
+                
+                updateUI();
+            }
+            
+            // Atualizar a interface
+            function updateUI() {
+                balanceElement.textContent = balance.toFixed(2);
+                minesCountElement.textContent = minesCount;
+                gemsCountElement.textContent = gemsCount;
+                multiplierElement.textContent = multiplier.toFixed(2) + 'x';
+                
+                // Calcular ganho potencial
+                const potentialWin = (currentBet * multiplier).toFixed(2);
+                potentialWinElement.textContent = potentialWin;
+                
+                // Atualizar opções de aposta
+                betOptions.forEach(option => {
+                    const betValue = parseFloat(option.dataset.bet);
+                    option.classList.toggle('selected', betValue === currentBet);
+                    option.disabled = gameActive || betValue > balance;
+                });
+                
+                playButton.disabled = gameActive || currentBet > balance;
+                cashoutButton.disabled = !gameActive || revealedCells.length === 0;
+            }
+            
+            // Revelar uma célula
+            function revealCell(index) {
+                if (gameOver || revealedCells.includes(index) || gameActive === false) return;
+                
+                const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                const symbolElement = cell.querySelector('.symbol');
+                
+                // Verificar se é uma mina
+                if (minesPositions.includes(index)) {
+                    // Jogador encontrou uma mina - fim de jogo
+                    cell.classList.add('revealed', 'mine');
+                    symbolElement.textContent = "💣";
+                    symbolElement.classList.remove('hidden');
+                    
+                    // Revelar todas as minas
+                    minesPositions.forEach(mineIndex => {
+                        if (mineIndex !== index) {
+                            const mineCell = document.querySelector(`.cell[data-index="${mineIndex}"]`);
+                            const mineSymbol = mineCell.querySelector('.symbol');
+                            mineCell.classList.add('revealed', 'mine');
+                            mineSymbol.textContent = "💣";
+                            mineSymbol.classList.remove('hidden');
+                        }
+                    });
+                    
+                    messageElement.innerHTML = `Você encontrou uma mina! <span class="lose">Perdeu ${currentBet.toFixed(2)} Alfas!</span>`;
+                    lossSound.play();
+                    
+                    gameOver = true;
+                    gameActive = false;
+                    balance -= currentBet;
+                    balance = parseFloat(balance.toFixed(2));
+                    
+                    // Verificar se o jogador ficou sem dinheiro
+                    checkBalance();
+                } else {
+                    // Jogador encontrou uma gema
+                    cell.classList.add('revealed', 'gem');
+                    symbolElement.textContent = "💎";
+                    symbolElement.classList.remove('hidden');
+                    revealSound.play();
+                    
+                    revealedCells.push(index);
+                    
+                    // Atualizar multiplicador
+                    const gemsFound = revealedCells.length;
+                    multiplier = 1.00 + (gemsFound * 0.41);
+                    
+                    messageElement.innerHTML = `Você encontrou uma gema! <span class="win">Multiplicador: ${multiplier.toFixed(2)}x</span>`;
+                    
+                    // Verificar se o jogador encontrou todas as gemas
+                    if (revealedCells.length === gemsCount) {
+                        messageElement.innerHTML = `Você encontrou todas as gemas! <span class="win">Ganhou ${(currentBet * multiplier).toFixed(2)} Alfas!</span>`;
+                        winSound.play();
+                        createWinAnimation('large');
+                        
+                        balance += currentBet * multiplier;
+                        balance = parseFloat(balance.toFixed(2));
+                        
+                        gameActive = false;
+                        gameOver = true;
+                    }
+                }
+                
+                updateUI();
+            }
+            
+            // Iniciar o jogo
+            function startGame() {
+                if (gameActive || currentBet > balance) return;
+                
+                gameActive = true;
+                gameOver = false;
+                revealedCells = [];
+                multiplier = 1.00;
+                
+                initializeGrid();
+                messageElement.textContent = "Selecione uma célula para revelar!";
+                
+                updateUI();
+            }
+            
+            // Sacar os ganhos
+            function cashout() {
+                if (!gameActive || revealedCells.length === 0) return;
+                
+                const winAmount = currentBet * multiplier;
+                balance += winAmount;
+                balance = parseFloat(balance.toFixed(2));
+                
+                messageElement.innerHTML = `Você sacou! <span class="win">Ganhou ${winAmount.toFixed(2)} Alfas!</span>`;
+                winSound.play();
+                
+                // Mostrar animação baseada no valor ganho
+                if (winAmount >= 100) {
+                    createWinAnimation('large');
+                } else if (winAmount >= 20) {
+                    createWinAnimation('medium');
+                } else {
+                    createWinAnimation('small');
+                }
+                
+                gameActive = false;
+                gameOver = true;
+                
+                updateUI();
+            }
+            
+            // Criar animação de vitória
+            function createWinAnimation(size) {
+                winAnimation.innerHTML = '';
+                
+                const confettiCount = size === 'small' ? 30 : size === 'medium' ? 60 : 100;
+                const coinCount = size === 'small' ? 10 : size === 'medium' ? 20 : 30;
+                
+                // Criar confetes
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = getRandomColor();
+                    confetti.style.animation = `confettiRain ${(Math.random() * 3 + 2)}s linear forwards`;
+                    confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                    winAnimation.appendChild(confetti);
+                }
+                
+                // Criar moedas caindo
+                for (let i = 0; i < coinCount; i++) {
+                    const coin = document.createElement('div');
+                    coin.classList.add('coin');
+                    coin.innerHTML = '<i class="fas fa-coins"></i>';
+                    coin.style.left = Math.random() * 100 + 'vw';
+                    coin.style.animation = `coinRain ${(Math.random() * 2 + 3)}s linear forwards`;
+                    coin.style.animationDelay = (Math.random() * 0.3) + 's';
+                    coin.style.color = getRandomGoldColor();
+                    winAnimation.appendChild(coin);
+                }
+                
+                // Remover animação após conclusão
+                setTimeout(() => {
+                    winAnimation.innerHTML = '';
+                }, 5000);
+            }
+            
+            // Gerar cor aleatória para confetes
+            function getRandomColor() {
+                const colors = ['#f9d8a1', '#c89253', '#4cd964', '#3498db', '#9b59b6', '#e94560', '#f1c40f', '#1abc9c'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // Gerar cor dourada aleatória para moedas
+            function getRandomGoldColor() {
+                const colors = ['#f9d8a1', '#ffd700', '#daa520', '#c89253', '#b8860b'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // Verificar se o jogador ainda tem saldo
+            function checkBalance() {
+                if (balance < 0.40) {
+                    setTimeout(() => {
+                        // Redirecionar para outro link quando o saldo zerar
+                        // Substitua o link abaixo pelo seu link real
+                        window.location.href = "https://exemplo.com/outro-jogo";
+                    }, 2000);
+                }
+            }
+            
+            // Definir valor da aposta
+            function setBetValue(value) {
+                if (gameActive) return;
+                
+                currentBet = value;
+                clickSound.play();
+                updateUI();
+            }
+            
+            // Mostrar anúncio
+            function showAd() {
+                adModal.classList.add('active');
+            }
+            
+            // Fechar anúncio
+            function closeAd() {
+                adModal.classList.remove('active');
+                
+                // Agendar próximo anúncio
+                setTimeout(showAd, 60000); // A cada 1 minuto
+            }
+            
+            // Event listeners
+            playButton.addEventListener('click', startGame);
+            cashoutButton.addEventListener('click', cashout);
+            
+            betOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    setBetValue(parseFloat(option.dataset.bet));
+                });
+            });
+            
+            adCloseButton.addEventListener('click', closeAd);
+            adButton.addEventListener('click', () => {
+                // Simular clique em anúncio - em um cenário real, isso redirecionaria para o anunciante
+                alert('Obrigado por apoiar nosso jogo! Em um cenário real, você seria redirecionado para o site do anunciante.');
+                closeAd();
+            });
+            
+            // Inicializar o jogo
+            initializeGrid();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
